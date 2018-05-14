@@ -2,7 +2,7 @@
 
 Aframe component to inject custom GLSL into the THREE.js MeshStandardMaterial Shader.
 
-Have a look at the [example](https://pbayer8.github.io/aframe-orbit-controls-component/examples/index.html)
+Have a look at the [example](https://pbayer8.github.io/aframe-glsl-component/examples/index.html)
 
 ### API
 
