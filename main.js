@@ -1,5 +1,5 @@
 let start = Date.now()
-AFRAME.registerComponent("custom-standard", {
+AFRAME.registerComponent("glsl-standard", {
     schema: {
         //TODO mipmap/minfilter bug envmap wont blur with roughness)
         map: { type: "selector", default: null },

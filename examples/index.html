@@ -16,45 +16,36 @@
         <img src="images/grass.png" id="grass"/>
     </a-assets>
     <a-sphere position="0 1.4 -2"
-              custom-standard="
+              glsl-standard="
               envMap:#sky;
               map:#floral;
-              roughness:.8;
-              metalness:1;"
+              normalMap:#couch;
+              metalness:.5;"
               segments-height="128"
-              segments-width="128"></a-sphere>
-
+              segments-width="128">
+    </a-sphere>
 </a-scene>
-<script id="fragUniformsGLSL" type="x-shader/x-fragment">
- //add fragment shader uniforms, varyings and functions here:
-  varying float dnoise;
-  varying float mnoise;
-</script>
-<script id="fragModsGLSL" type="x-shader/x-fragment">
- //modify or reassign the finalColor vec3 here:
-// reflectedLight.indirectDiffuse.r*=max(dnoise,.5);
-// reflectedLight.indirectDiffuse.g*=max(mnoise,.5);
-// finalColor = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
-// float nn = 0.;
-// if (dnoise>0.){
-// nn = 1.;
-// } else {
-// nn = -1.;
-// }
-// finalColor*=nn;
-// finalColor+=-.5*nn+.5;
-</script>
 <script id="vertUniformsGLSL" type="x-shader/x-fragment">
- //add vertex shader uniforms, varyings and functions here:
- varying float dnoise;
- varying float mnoise;
+    //add vertex shader uniforms, varyings and functions here:
+    varying float wave1;
+    varying float wave2;
 </script>
 <script id="vertModsGLSL" type="x-shader/x-fragment">
- //modify or reassign the finalPosition vec3 here:
-// dnoise = min(sin(finalPosition.y*5.+seconds*2.),0.)*2.+1.;
- mnoise = cos(finalPosition.x*9.+seconds*3.);
-// finalPosition.x += .1*dnoise;
- finalPosition.z += .1* mnoise;
+    //modify or reassign the finalPosition vec3 here:
+    wave1 = sin(finalPosition.y*5.+seconds*2.);
+    wave2 = cos(finalPosition.x*9.+seconds*3.);
+    finalPosition.x += .1*wave1;
+    finalPosition.z += .1* wave2;
+</script>
+<script id="fragUniformsGLSL" type="x-shader/x-fragment">
+    //add fragment shader uniforms, varyings and functions here:
+    varying float wave1;
+    varying float wave2;
+</script>
+<script id="fragModsGLSL" type="x-shader/x-fragment">
+    //modify or reassign the finalColor vec3 here:
+    finalColor.r += min(wave1,0.);
+    finalColor.b += wave2;
 </script>
 </body>
 
