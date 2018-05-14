@@ -69,4 +69,5 @@ Then, write GLSL. This component give you access to two vec3 type variables you 
 ```
 
 The result will look like:
-[this Image](https://imgur.com/a/QevHIjf.gif)
+
+![](https://i.imgur.com/ruOJwIZ.gif)
