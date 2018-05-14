@@ -2,6 +2,8 @@
 
 Aframe component to inject custom GLSL into the THREE.js MeshStandardMaterial Shader.
 
+![](https://i.imgur.com/U2zbXIJ.gif)
+
 Have a look at the [example](https://pbayer8.github.io/aframe-glsl-component/examples/index.html)
 
 ### API
@@ -42,7 +44,12 @@ Add the `glsl-standard` component to an entity with geometry. Note that it works
 </a-scene>
 ```
 
-Then, write GLSL. This component give you access to two vec3 type variables you can modify: `finalPosition` in the vertex shader, and `finalColor` in the fragment shader. It also creates and updates two floats variables `time` (mS) and `seconds` that you can use. You can specify alternate script tags, otherwise it defaults to what is listed in the API section above:
+Then, write GLSL. This component gives you access to two vec3 type variables you can modify:
+`finalPosition` in the vertex shader, and `finalColor` in the fragment shader.
+The component creates and updates two floats variables `time` (mS) and `seconds` that you can use,
+and a vec3 `objectNormal` that you can read and use when modifying the `finalPosition` variable.
+I've also included a small collection of noise and shaping functions.
+You can specify alternate script tags, otherwise it defaults to what is listed in the API section above:
 ```
 <script id="vertUniformsGLSL" type="x-shader/x-fragment">
     //add vertex shader uniforms, varyings and functions here:

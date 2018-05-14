@@ -11,16 +11,45 @@
 <a-scene fog="type:linear;near:2;far:15;">
     <a-assets>
         <img src="images/floral.jpg" id="floral"/>
-        <img src="images/couchnormal.png" id="couch"/>
+        <img src="images/couch.png" id="couch"/>
         <img src="images/scene.jpg" id="sky"/>
         <img src="images/grass.png" id="grass"/>
+        <img src="images/broken.jpg" id="broken"/>
+        <img src="images/rough.jpg" id="rough"/>
+        <img src="images/rust.jpg" id="rust"/>
+        <img src="images/bw.png" id="bw"/>
     </a-assets>
-    <a-sphere position="0 1.4 -2"
+    <a-sphere position="-3 1.4 -5"
               glsl-standard="
               envMap:#sky;
               map:#floral;
               normalMap:#couch;
-              metalness:.5;"
+              metalness:.1;"
+              segments-height="128"
+              segments-width="128">
+    </a-sphere>
+    <a-sphere position="0 1.4 -5"
+              glsl-standard="
+              envMap:#sky;
+              map:#rust;
+              normalMap:#rough;
+              metalness:.5;
+              vertUniformsGLSL:#none;
+              vertModsGLSL:#noisevert;
+              fragUniformsGLSL:#none;
+              fragModsGLSL:#none;"
+              segments-height="128"
+              segments-width="128">
+    </a-sphere>
+    <a-sphere position="3 1.4 -5"
+              glsl-standard="
+              envMap:#sky;
+              diffuse:#11dd66;
+              metalness:.5;
+              vertUniformsGLSL:#cellular-uni;
+              vertModsGLSL:#cellular;
+              fragUniformsGLSL:#cellular-uni;
+              fragModsGLSL:#cellular-frag;"
               segments-height="128"
               segments-width="128">
     </a-sphere>
@@ -32,7 +61,7 @@
 </script>
 <script id="vertModsGLSL" type="x-shader/x-fragment">
     //modify or reassign the finalPosition vec3 here:
-    wave1 = sin(finalPosition.y*5.+seconds*2.);
+    wave1 = abs(sin(finalPosition.y*5.+seconds*2.));
     wave2 = cos(finalPosition.x*9.+seconds*3.);
     finalPosition.x += .1*wave1;
     finalPosition.z += .1* wave2;
@@ -44,8 +73,56 @@
 </script>
 <script id="fragModsGLSL" type="x-shader/x-fragment">
     //modify or reassign the finalColor vec3 here:
-    finalColor.r += min(wave1,0.);
+    finalColor.r += wave1;
     finalColor.b += wave2;
+</script>
+<script id="noisevert" type="x-shader/x-fragment">
+    float disp =  .025 * cnoise(finalPosition * 200.+seconds);
+    disp +=  .4 * cnoise(position * .6+seconds);
+    finalPosition += objectNormal * disp;
+</script>
+<script id="cellular-uni" type="x-shader/x-fragment">
+    varying float disp;
+</script>
+<script id="cellular" type="x-shader/x-fragment">
+    vec2 st = finalPosition.xy;
+    // Scale
+    // Copied from Book of Shaders <3 them
+    st *= 2.;
+    // Tile the space
+    vec2 i_st = floor(st);
+    vec2 f_st = fract(st);
+    float m_dist = 1.;  // minimun distance
+    for (int y= -1; y <= 1; y++) {
+        for (int x= -1; x <= 1; x++) {
+            // Neighbor place in the grid
+            vec2 neighbor = vec2(float(x),float(y));
+
+            // Random position from current + neighbor place in the grid
+            vec2 point = random2(i_st + neighbor);
+
+            // Animate the point
+            point = 0.5 + 0.5*sin(seconds + 6.2831*point);
+
+            // Vector between the pixel and the point
+            vec2 diff = neighbor + point - f_st;
+
+            // Distance to the point
+            float dist = length(diff);
+
+            // Keep the closer distance
+            m_dist = min(m_dist, dist);
+        }
+    }
+    // Draw the min distance (distance field)
+    disp += m_dist-.25;
+    finalPosition += + objectNormal * disp*.6;
+</script>
+<script id="cellular-frag" type="x-shader/x-fragment">
+    if (disp<.3){
+    finalColor -= .5;
+    finalColor.rb += 1.*length(reflectedLight.directSpecular + reflectedLight.indirectSpecular);
+    }
 </script>
 </body>
 
